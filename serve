@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+ORIG_DIR="$(pwd)"
+cd "$(dirname "$0")"
+
+onExit() {
+  cd "${ORIG_DIR}"
+}
+
+trap onExit EXIT
+
+docker build -t eoepca/zensical .
+
+exec docker run --name zensical-serve --rm -it \
+  -p 8000:8000 \
+  -v ${PWD}:/docs \
+  eoepca/zensical \
+  serve --dev-addr 0.0.0.0:8000
